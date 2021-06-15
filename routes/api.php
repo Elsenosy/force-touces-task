@@ -14,6 +14,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+
+/**
+ * Api Auth routes
+ */
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'auth'
+
+], function ($router) {
+
+    Route::post('login', 'AuthController@login');
+    Route::post('logout', 'AuthController@logout');
+});
+
+// Posts and comments
+Route::group(['prefix' => 'posts', 'middleware' => 'auth:api'], function(){
+    $controller = 'PostController@';
+    Route::get('/', $controller.'index'); // Get user posts
+    Route::get('/{id}', $controller.'show'); // Get a post
+    Route::post('/', $controller.'store'); // Make new post
+    Route::post('/make-comment', $controller.'storeComment'); //  make post comment
 });
